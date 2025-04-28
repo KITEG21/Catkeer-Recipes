@@ -58,3 +58,8 @@ li::before {
   left: 0;
   color: #646cff; /* Optional: bullet color */
 }
+
+.ingredient-title{
+  display: flex;
+  margin-top: 2rem;
+}

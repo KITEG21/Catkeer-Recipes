@@ -12,13 +12,22 @@ form{
   display: flex;
 }
 
-.input-bar{
+.input-bar-dark{
   width: 150rem;
   padding: 1rem;
   border-radius: 0.5rem;
   border: none;
   background-color: #383636;
   color: #fff;
+}
+
+.input-bar-light{
+  width: 150rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #dfd3df;
+  color: #000000;
 }
 
 .input-bar:focus{
@@ -62,4 +71,89 @@ li::before {
 .ingredient-title{
   display: flex;
   margin-top: 2rem;
+}
+
+.recipe-dark {
+  color: #d6c4c4;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 16px;
+  text-align: left;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-dark pre {
+  white-space: pre-wrap;
+  text-align: left;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.recipe-light {
+  color: #181717;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 16px;
+  text-align: left;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-light pre {
+  white-space: pre-wrap;
+  text-align: left;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.recipe-result h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #646cff;
+}
+
+/* Style for list items in the recipe */
+.recipe ul {
+  list-style-position: inside;
+  list-style-type: disc;
+  padding-left: 1rem;
+}
+
+.recipe ol {
+  list-style-position: inside;
+  list-style-type: decimal;
+  padding-left: 1rem;
+}
+
+.recipe li {
+  padding: 0.5rem 0;
+  text-align: left;
+}
+
+.recipe li::before {
+  content: none;
+}
+
+.theme-toggle-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: var(--button-background);
+  color: var(--button-text);
+  z-index: 1000;
+}
+
+.theme-toggle-button:hover {
+  opacity: 0.9;
 }

@@ -1,10 +1,15 @@
-import { useState, useEffect } from 'react'
-
+// src/App.tsx
+import { useState } from 'react'
 import './App.css'
+import { useTheme } from './hooks/useTheme';
+import { generateRecipe } from './api/recipeApi';
+import { ThemeToggle } from './components/ThemeToggle';
+import { IngredientForm } from './components/IngredientForm';
+import { IngredientList } from './components/IngredientList';
+import { RecipeGenerator } from './components/RecipeGenerator';
+import { RecipeDisplay } from './components/RecipeDisplay';
 
 function App() {
-
-
   const exampleRecipe = `
   Ingredients:
   - 2 cups of flour
@@ -24,42 +29,16 @@ function App() {
   6. Let it cool before serving. Enjoy your homemade cake!
   `;
   
-  const [ingredients, setIngredient] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [ingredients, setIngredients] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [recipe, setRecipe] = useState<string>(exampleRecipe);
-
-  const [darkTheme, setDarkTheme] = useState<boolean>(false);
+  const [recipe, setRecipe] = useState<string>('');
+  const { darkTheme, toggleTheme } = useTheme();
   
-  useEffect(() => {
-    if (darkTheme) {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
-  }, [darkTheme]);
-
-  const toggleTheme = () => {
-    setDarkTheme((prevTheme) => !prevTheme);
+  const handleAddIngredient = (ingredient: string) => {
+    setIngredients([...ingredients, ingredient]);
   };
-
-  const ingredientsListItem = ingredients.map(i => (
-    <li key={i}>{i}</li>
-  ))
-
-  const handleClick = (e : React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (inputValue.trim() !== '') {
-      setIngredient([...ingredients, inputValue]);
-      setInputValue('');
-    }
-  }
   
-  const handleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  }
-  
-  const handleGetRecipe = async (e : React.MouseEvent<HTMLButtonElement>) => {
+  const handleGetRecipe = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
     
@@ -68,88 +47,23 @@ function App() {
       setRecipe(response);
     } catch (error) {
       console.error('Error generating recipe:', error);
-      console.log(recipe);
       setRecipe('Failed to generate recipe. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  async function generateRecipe(ingredients: string[]) {
-    const API_KEY: string = import.meta.env.VITE_APP_KEY;
-    console.log(API_KEY);
-    const MODEL_ID = 'mistralai/Mixtral-8x7B-Instruct-v0.1'; // You can try different models
-    
-    const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL_ID}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        inputs: `<s>[INST] You are a professional chef. Create a detailed recipe using these ingredients: ${ingredients.join(', ')}. Include preparation steps, cooking time, and serving suggestions. [/INST]</s>`,
-        parameters: {
-          max_new_tokens: 1024,
-          temperature: 0.7,
-          return_full_text: false
-        }
-      })
-    });
-  
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('API Error:', errorData);
-      throw new Error(`Hugging Face API error: ${errorData}`);
-    }
-    
-    const data = await response.json();
-    return data[0].generated_text;
-  }
-
-  
-
   return (
     <>
-      <button className='theme-toggle-button' onClick={toggleTheme}> {darkTheme ? 'Light' : 'Dark'}</button>
-      <form>
-        <input
-          className={`input-bar-${darkTheme ? 'dark' : 'light'}`}
-          type='text'
-          placeholder='introduce ingredients'
-          aria-label='add ingredient'
-          value={inputValue}
-          onChange={handleChange}
-          />
-
-        <button 
-        className='add-button'
-        onClick={handleClick}
-        
-        > Add ingredient</button>
-      </form>
+      <ThemeToggle darkTheme={darkTheme} toggleTheme={toggleTheme} />
+      <IngredientForm onAddIngredient={handleAddIngredient} darkTheme={darkTheme} />
+      <IngredientList ingredients={ingredients} />
       
-      <h2 className='ingredient-title'>Ingredients list</h2>
-      <ul>{ingredientsListItem}</ul>
-
-      {ingredientsListItem.length > 0 && <div className='get-recipe-container'>
-        <div>
-          <h3>Ready for a recipe?</h3>
-          <p>Click the button below to get a recipe based on your ingredients.</p>
-        </div>
-        <button className='get-recipe-button' 
-        onClick={handleGetRecipe}>
-          {!isLoading ? 'Get Recipe' : 'Loading...'}
-          </button>
-      </div>
-      }
-      {recipe && (
-      <div className={`recipe-${darkTheme ? 'dark' : 'light'}`}>
-        <div className="recipe-result">
-          <h2>Your Recipe</h2>
-          <pre>{recipe}</pre>
-        </div>
-      </div>)}
+      {ingredients.length > 0 && (
+        <RecipeGenerator onGenerateRecipe={handleGetRecipe} isLoading={isLoading} />
+      )}
       
+      {recipe && <RecipeDisplay recipe={recipe} darkTheme={darkTheme} />}
     </>
   )
 }

@@ -10,7 +10,7 @@ An AI-powered app that generates delicious recipes based on the ingredients you 
 
 ## 📸 Preview
 
-![Recipe Generator Screenshot](./screenshot.png)  
+![Recipe Generator Screenshot](./preview.gif)  
 
 ---
 
